@@ -4403,5 +4403,6 @@
 1, 43673, Note_on_c, 1, 38, 0
 1, 43776, Note_on_c, 1, 38, 0
 1, 44130, Note_on_c, 1, 38, 0
-1, 44140, End_track
+1, 44170, Tempo, 612244
+1, 44180, End_track
 0, 0, End_of_file

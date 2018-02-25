@@ -1,6 +1,7 @@
 0, 0, Header, 0, 1, 480
 1, 0, Start_track
 1, 0, Tempo, 461538
+1, 1440, Tempo, 1090909
 1, 1440, Note_on_c, 0, 70, 80
 1, 1440, Note_on_c, 1, 58, 80
 1, 1548, Note_on_c, 1, 58, 0
