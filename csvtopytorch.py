@@ -1,7 +1,6 @@
 import torch
 from torch.autograd import Variable
-# from os import listdir
-import sys
+from os import listdir
 
 
 def csv_to_variable(lines):
@@ -15,6 +14,7 @@ def csv_to_variable(lines):
     tpp = int(lines[0].split()[-1])
     tempo = 60 / tpp
     time_index = 0
+    conv_factor = 0
     track = []
 
     for index, line in list(enumerate(lines))[2:-2]:
@@ -24,6 +24,9 @@ def csv_to_variable(lines):
             # Given x in ticks, this will return y in milliseconds
             conv_factor = tempo / (1000 * tpp)
             continue
+
+        if conv_factor == 0:
+            raise Exception("Tempo not specified at start of file")
 
         elements = line.split()
         vel = int(elements[-1])
@@ -47,7 +50,7 @@ def csv_to_variable(lines):
         for i, digit in enumerate(tsp):
             t_since_prev[i*10 + digit] = 1
 
-        # This keeps track of where in the track we are
+        # We can update this now, we needed the old one in the prev calculation
         time_index = ticks
 
         # A one-hot array representing which note is being played
@@ -60,15 +63,15 @@ def csv_to_variable(lines):
             if "Note" not in next_line:
                 continue
 
-            info = next_line.split()
-            if info[-1] == "0" and int(info[-2][:-1]) == note:
-                end_tick = int(info[1][:-1])
+            elements = next_line.split()
+            if elements[-1] == "0" and int(elements[-2][:-1]) == note:
+                end_tick = int(elements[1][:-1])
                 break
         else:
             raise Exception("Note at {} never finishes.".format(time_index))
 
         length = [0] * 40
-        l = end_tick - ticks
+        l = round((end_tick - time_index) * conv_factor)
         l = min(9999, l)
         l = [int(d) for d in str(l)]
         l = [0] * (4 - len(l)) + l
@@ -80,8 +83,18 @@ def csv_to_variable(lines):
     return Variable(torch.Tensor(track))
 
 
-in_lines = sys.stdin.readlines()
-print(csv_to_variable(in_lines))
-# for filename in listdir("./csv_clean"):
-#     if filename[0] == ".":
-#         continue
+if __name__ == "__main__":
+    counter = 0
+    for filename in listdir("./csv_clean"):
+        if filename[0] == ".":
+            continue
+
+        print(filename)
+        in_file = open("./csv_clean/" + filename, "r")
+        in_lines = in_file.readlines()
+        in_file.close()
+
+        var = csv_to_variable(in_lines)
+        torch.save({"Variable": var}, "./data/" + str(counter))
+
+        counter += 1

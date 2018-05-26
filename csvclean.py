@@ -8,8 +8,8 @@ def clean_file(lines):
     It takes a list of lines, removes any events that are not Tempo changes or
     note activations/deactivations, and merges them into one track.
     The output consist of the Header line, the start of the
-    track, the notes and Tempo events, the end of the track, the 
-    end of file, and nothing else.
+    track, the notes and Tempo events, the end of the track, the
+    end of file, and nothing else, in that order.
     The convetion of using a Note_on_c with velocity 0 instead of a Note_off_c
     is adopted."""
 
@@ -74,15 +74,16 @@ def clean_file(lines):
     return output
 
 
-for filename in listdir("./csv"):
-    if filename[0] == ".":
-        continue
+if __name__ == "__main__":
+    for filename in listdir("./csv"):
+        if filename[0] == ".":
+            continue
 
-    in_file = open("./csv/" + filename, "r")
-    in_lines = in_file.readlines()
+        in_file = open("./csv/" + filename, "r")
+        in_lines = in_file.readlines()
 
-    out_file = open("./csv_clean/" + filename, "w")
-    out_file.write(clean_file(in_lines))
+        out_file = open("./csv_clean/" + filename, "w")
+        out_file.write(clean_file(in_lines))
 
-    in_file.close()
-    out_file.close()
+        in_file.close()
+        out_file.close()

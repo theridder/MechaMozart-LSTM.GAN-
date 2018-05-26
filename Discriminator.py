@@ -12,15 +12,15 @@ class DiscriminatorV1(nn.Module):
     separate. Output is not given at every step, but at the very end of
     processing a track.
     -Input format: x is a 2D tensor. First axis lenght is amount of notes in
-    the example. Second axis consists of 4*10 one-hot arrays, i.e. a four
-    digit number representing milliseconds since previous note; another four
-    representing lenght of note; 127 entries representing which note is being
-    activated, and 7 more to represent velocity 1-127.
+    the example. Each column along second axis consists of 4*10 one-hot arrays,
+    i.e. a four digit number representing milliseconds since previous note;
+    another 4*10 representing lenght of note; 128 entries representing which
+    note is being activated, and 7 more to represent velocity 1-127.
     -Output format: a 1D tensor with two entries, representing probablilities
     of real/fake.
     """
 
-    def __init__(self, note_size=4*10 + 4*10 + 127 + 7, state_size=200):
+    def __init__(self, note_size=4*10 + 4*10 + 128 + 7, state_size=200):
         super(DiscriminatorV1, self).__init__()
         self.forgetgate = nn.Linear(state_size + note_size, state_size)
         self.inputgate = nn.Linear(state_size + note_size, state_size)
